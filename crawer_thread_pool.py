@@ -8,7 +8,7 @@ import threading
 import time
 
 
-class Worker(threading.Thread):    # 处理工作请求
+class Worker(threading.Thread):
     def __init__(self, workQueue, resultQueue, **kwds):
         threading.Thread.__init__(self, **kwds)
         self.setDaemon(True)
@@ -25,17 +25,17 @@ class Worker(threading.Thread):    # 处理工作请求
                 break
 
 
-class WorkManager:    # 线程池管理,创建
+class WorkManager:
     def __init__(self, num_of_workers=10):
-        self.workQueue = Queue.Queue()    # 请求队列
-        self.resultQueue = Queue.Queue()    # 输出结果的队列
+        self.workQueue = Queue.Queue()
+        self.resultQueue = Queue.Queue()
         self.workers = []
         self._recruitThreads(num_of_workers)
 
     def _recruitThreads(self, num_of_workers):
         for i in range(num_of_workers):
-            worker = Worker(self.workQueue, self.resultQueue)    # 创建工作线程
-            self.workers.append(worker)    # 加入到线程队列
+            worker = Worker(self.workQueue, self.resultQueue)
+            self.workers.append(worker)
 
     def start(self):
         for w in self.workers:
@@ -43,33 +43,34 @@ class WorkManager:    # 线程池管理,创建
 
     def wait_for_complete(self):
         while len(self.workers):
-            worker = self.workers.pop()    # 从池中取出一个线程处理请求
+            worker = self.workers.pop()
             worker.join()
             if worker.isAlive() and not self.workQueue.empty():
-                self.workers.append(worker)    # 重新加入线程池中
+                self.workers.append(worker)
         print 'All jobs were complete.'
 
     def add_job(self, callable, *args, **kwds):
-        self.workQueue.put((callable, args, kwds))    # 向工作队列中加入请求
+        self.workQueue.put((callable, args, kwds))
 
     def get_result(self, *args, **kwds):
         return self.resultQueue.get(*args, **kwds)
 
 
 def download_file(url):
-    #print 'beg download', url
     requests.get(url).text
 
 
 def main():
     try:
         num_of_threads = int(sys.argv[1])
+        urls = [sys.argv[2]] * 2000
     except:
-        num_of_threads = 15
+        num_of_threads = 4
+        urls = ['www.baidu.com'] * 2000
+
     _st = time.time()
+
     wm = WorkManager(num_of_threads)
-    print num_of_threads
-    urls = ['http://www.sdnlab.com'] * 2000
     for i in urls:
         wm.add_job(download_file, i)
     wm.start()
