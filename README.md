@@ -8,7 +8,7 @@ These are some easy network attack examples implemented by scapy. Just play for 
     Parameter: target IP
     Usage: 
 
-        sudo python arpAttack.py 192.168.0.3
+        sudo python arp_attack.py 192.168.0.3
 
 * arp\_attack\_all\_hosts
     Attack all targets in local network by sending ARP packet with fake gateway information.
@@ -16,7 +16,7 @@ These are some easy network attack examples implemented by scapy. Just play for 
     Parameter: ipprefix, mask length
     Usage:
 
-        sudo python arp\_attack\_all\_hosts.py 192.168.3.0, 24
+        sudo python arp_attack_all_hosts.py 192.168.3.0, 24
 
 * dnsAttack
     Fake DNS attacking.
@@ -30,7 +30,7 @@ These are some easy network attack examples implemented by scapy. Just play for 
     Parameter: number of thread, target url
     Usage:
 
-        sudo python crawer\_thread\_pool.py 10 http://www.baidu.com
+        sudo python crawer_thread_pool.py 10 http://www.baidu.com
 
 * ping\_of\_death
     Send a overlength ICMP packet to target host to crash down the target system. Actually, most system can defend this attack.
@@ -38,6 +38,6 @@ These are some easy network attack examples implemented by scapy. Just play for 
     Parameter: target IP
     Usage:
 
-        sudo python ping\_of\_death 192.168.0.3
+        sudo python ping_of_death 192.168.0.3
 
 Enjoy it.
